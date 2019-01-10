@@ -40,7 +40,7 @@ public class SoundPoolUtil {
         return mInstance;
     }
 
-    private void init() {
+    public void init() {
         mAudioManager = (AudioManager) this.mContext.getSystemService(Context.AUDIO_SERVICE);
         float currentVolumeIndex = mAudioManager.getStreamVolume(streamType);
         float maxVolumeIndex = mAudioManager.getStreamMaxVolume(streamType);
@@ -55,11 +55,11 @@ public class SoundPoolUtil {
     }
 
 
-    private void loadSound(int reId) {
-        mSoundPool.load(mContext, reId, 1);
+    public int loadSound(int reId) {
+        return  mSoundPool.load(mContext, reId, 1);
     }
 
-    private void playSound(final int resId) {
+    public void playSound(final int resId) {
         final float lefVolume = volume;
         final float rightVolume = volume;
         mSoundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
