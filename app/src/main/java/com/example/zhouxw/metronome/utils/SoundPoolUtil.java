@@ -6,6 +6,7 @@ import android.content.Context;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.SoundPool;
+import android.util.Log;
 
 /**
  * @author zhouxw
@@ -40,12 +41,12 @@ public class SoundPoolUtil {
         return mInstance;
     }
 
-    public void init() {
-        mAudioManager = (AudioManager) this.mContext.getSystemService(Context.AUDIO_SERVICE);
+    public void init( Context context) {
+        mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         float currentVolumeIndex = mAudioManager.getStreamVolume(streamType);
         float maxVolumeIndex = mAudioManager.getStreamMaxVolume(streamType);
         this.volume = currentVolumeIndex / maxVolumeIndex;
-        ((Activity) this.mContext).setVolumeControlStream(streamType);
+        ((Activity) context).setVolumeControlStream(streamType);
         AudioAttributes audioAttributes = new AudioAttributes.Builder()
                 .setUsage(AudioAttributes.USAGE_GAME)
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
@@ -62,6 +63,7 @@ public class SoundPoolUtil {
     public void playSound(final int resId) {
         final float lefVolume = volume;
         final float rightVolume = volume;
+        Log.d("zhouxw","playSound=="+volume+"  ="+resId);
         mSoundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
             @Override
             public void onLoadComplete(SoundPool soundPool, int i, int i1) {

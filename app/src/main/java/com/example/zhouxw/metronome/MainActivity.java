@@ -1,8 +1,11 @@
 package com.example.zhouxw.metronome;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageButton;
@@ -18,17 +21,44 @@ import java.util.HashMap;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String SPEED_PRE= "speedPreferences";
     private static final  String SPEED= "Speed";
+    private static final  String MOLECULE= "Molecule";
+    private static final  String DENO= "Deno";
+    private static final  int PLAY =0x001;
+    private static final int MAXSPEED =280;
+    private static final  int MINSPEED = 40;
+    private static final  int MINDENO = 4;
+    private static final  int MAXDENO = 32;
     private TextView tvSpeed,tvRhythm;
     private int speed,molecule,deno ;
+    private boolean isPlaying=false;
     private ImageButton btnAdd,btnIncrease,btnPlay,btnMoleculeAdd,btnMoleculeIncr,btnDenoAdd,btnDenoIncr;
-    private SharedPreferences mSharedPreferences=getSharedPreferences(SPEED_PRE,Context.MODE_PRIVATE);
+    private SharedPreferences mSharedPreferences;
     private SoundPoolUtil mSoundPoolUtil;
     HashMap<Integer,Integer> musicId = new HashMap<>();
+
+    @SuppressLint("HandlerLeak")
+    private Handler mHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+        }
+    };
+
+    Runnable playTask= new Runnable() {
+        @Override
+        public void run() {
+            playSound(isPlaying);
+        }
+    };
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mSharedPreferences=getSharedPreferences(SPEED_PRE,Context.MODE_PRIVATE);
+        initData();
+        initView();
     }
 
     private void initView(){
@@ -41,6 +71,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnMoleculeAdd =findViewById(R.id.btn_add_molecule);
         btnMoleculeIncr =findViewById(R.id.btn_increase_molecule);
         tvRhythm = findViewById(R.id.tv_rhythm);
+        tvSpeed.setText(speed+"");
+        String label = molecule+" / "+deno;
+        tvRhythm.setText(label);
         btnAdd.setOnClickListener(this);
         btnPlay.setOnClickListener(this);
         btnIncrease.setOnClickListener(this);
@@ -53,7 +86,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private  void initData(){
         mSoundPoolUtil =SoundPoolUtil.getInstance(this);
+        mSoundPoolUtil.init(this);
         speed= mSharedPreferences.getInt(SPEED,60);
+        molecule = mSharedPreferences.getInt(MOLECULE,1);
+        deno = mSharedPreferences.getInt(DENO,4);
         musicId.put(0,mSoundPoolUtil.loadSound(R.raw.metronome1));
         musicId.put(1,mSoundPoolUtil.loadSound(R.raw.metronome2));
         musicId.put(2,mSoundPoolUtil.loadSound(R.raw.metronome3));
@@ -61,18 +97,113 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
         switch (view.getId()){
             case R.id.btn_add:{
+                if (speed>=MAXSPEED){
+                    speed=MINSPEED;
+                }else {
+                    speed++;
+                }
+                editor.putInt(SPEED,speed);
+                editor.apply();
+                tvSpeed.setText(speed+"");
                 break;
             }
             case R.id.btn_increase:{
+                if (speed<=MINSPEED){
+                    speed=MAXSPEED;
+                }else {
+                    speed--;
+                }
+                editor.putInt(SPEED,speed);
+                editor.apply();
+                tvSpeed.setText(speed+"");
                 break;
             }
             case R.id.btn_play:{
+                isPlaying = !isPlaying;
                 break;
+            }
+            case R.id.btn_add_meno:{
+                if (deno>=MAXDENO){
+                    deno=MINDENO;
+                }else {
+                    deno*=2;
+                }
+                String  label = molecule+" / "+deno;
+                tvRhythm.setText(label);
+                editor.putInt(DENO,deno);
+                editor.apply();
+                break;
+
+            }
+            case R.id.btn_add_molecule:{
+                if (molecule==4){
+                    molecule+=2;
+                }else if (molecule>=6){
+                    molecule=1;
+                }else {
+                    molecule++;
+                }
+                String  label = molecule+" / "+deno;
+                editor.putInt(MOLECULE,molecule);
+                editor.apply();
+                tvRhythm.setText(label);
+                break;
+            }
+            case R.id.btn_increase_deno:{
+                if (deno<=MINDENO){
+                    deno=MAXDENO;
+                }else {
+                    deno/=2;
+                }
+                String  label = molecule+" / "+deno;
+                editor.putInt(DENO,deno);
+                editor.apply();
+                tvRhythm.setText(label);
+                break;
+            }
+            case R.id.btn_increase_molecule:{
+                if (molecule==6){
+                    molecule-=2;
+                }else if (molecule<=1){
+                    molecule=6;
+                }else {
+                    molecule--;
+                }
+                String  label = molecule+" / "+deno;
+                editor.putInt(MOLECULE,molecule);
+                editor.apply();
+                tvRhythm.setText(label);
+
             }
             default:
         }
+        mHandler.removeCallbacks(playTask);
+        mHandler.post(playTask);
 
+    }
+
+    private void  playSound(boolean play){
+        int index=0;
+        do {
+            if (index == 0) {
+                mSoundPoolUtil.playSound(musicId.get(0));
+            } else if ((molecule == 4 && index == 2) || (molecule == 6 && index == 3)) {
+                mSoundPoolUtil.playSound(musicId.get(2));
+            } else {
+                mSoundPoolUtil.playSound(musicId.get(1));
+            }
+            if (index++ >= molecule) {
+                index = 0;
+            }
+            try {
+                Thread.sleep(60 * 1000 / speed / (deno / 4));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        } while (play);
     }
 }
