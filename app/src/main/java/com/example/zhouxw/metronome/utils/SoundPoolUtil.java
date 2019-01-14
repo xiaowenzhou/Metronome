@@ -8,6 +8,10 @@ import android.media.AudioManager;
 import android.media.SoundPool;
 import android.util.Log;
 
+import com.example.zhouxw.metronome.R;
+
+import java.util.HashMap;
+
 /**
  * @author zhouxw
  */
@@ -18,6 +22,7 @@ public class SoundPoolUtil {
     private              AudioManager  mAudioManager;
     private              Context       mContext;
     private              float         volume;
+    HashMap<Integer,Integer> musicId = new HashMap<>();
     /**
      * Max sound stream
      */
@@ -52,13 +57,13 @@ public class SoundPoolUtil {
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                 .build();
         this.mSoundPool = new SoundPool.Builder().setAudioAttributes(audioAttributes).setMaxStreams(MAX_STREAMS).build();
+        musicId.put(0,mSoundPool.load(mContext, R.raw.metronome1, 1));
+        musicId.put(1,mSoundPool.load(mContext, R.raw.metronome2, 1));
+        musicId.put(2,mSoundPool.load(mContext, R.raw.metronome3, 1));
 
     }
 
 
-    public int loadSound(int reId) {
-        return  mSoundPool.load(mContext, reId, 1);
-    }
 
     public void playSound(final int resId) {
         final float lefVolume = volume;
@@ -67,7 +72,7 @@ public class SoundPoolUtil {
         mSoundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
             @Override
             public void onLoadComplete(SoundPool soundPool, int i, int i1) {
-                mSoundPool.play(resId, lefVolume, rightVolume, 1, 0, 1f);
+                mSoundPool.play(musicId.get(resId), lefVolume, rightVolume, 1, 0, 1f);
             }
         });
     }

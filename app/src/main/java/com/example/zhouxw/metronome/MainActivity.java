@@ -14,6 +14,8 @@ import android.widget.TextView;
 import com.example.zhouxw.metronome.utils.SoundPoolUtil;
 
 import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author zhouxw
@@ -34,19 +36,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ImageButton btnAdd,btnIncrease,btnPlay,btnMoleculeAdd,btnMoleculeIncr,btnDenoAdd,btnDenoIncr;
     private SharedPreferences mSharedPreferences;
     private SoundPoolUtil mSoundPoolUtil;
-    HashMap<Integer,Integer> musicId = new HashMap<>();
-
-    @SuppressLint("HandlerLeak")
-    private Handler mHandler = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-        }
-    };
+    private ExecutorService mExecutors;
 
     Runnable playTask= new Runnable() {
         @Override
         public void run() {
-            playSound(isPlaying);
+            playSound();
         }
     };
 
@@ -87,12 +82,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private  void initData(){
         mSoundPoolUtil =SoundPoolUtil.getInstance(this);
         mSoundPoolUtil.init(this);
+        mExecutors = Executors.newSingleThreadExecutor();
         speed= mSharedPreferences.getInt(SPEED,60);
         molecule = mSharedPreferences.getInt(MOLECULE,1);
         deno = mSharedPreferences.getInt(DENO,4);
-        musicId.put(0,mSoundPoolUtil.loadSound(R.raw.metronome1));
-        musicId.put(1,mSoundPoolUtil.loadSound(R.raw.metronome2));
-        musicId.put(2,mSoundPoolUtil.loadSound(R.raw.metronome3));
     }
 
     @Override
@@ -123,6 +116,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             case R.id.btn_play:{
                 isPlaying = !isPlaying;
+              mExecutors.execute(playTask);
                 break;
             }
             case R.id.btn_add_meno:{
@@ -180,22 +174,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             default:
         }
-        mHandler.removeCallbacks(playTask);
-        mHandler.post(playTask);
+
 
     }
 
-    private void  playSound(boolean play){
+    private void  playSound(){
         int index=0;
         do {
             if (index == 0) {
-                mSoundPoolUtil.playSound(musicId.get(0));
+                mSoundPoolUtil.playSound(0);
             } else if ((molecule == 4 && index == 2) || (molecule == 6 && index == 3)) {
-                mSoundPoolUtil.playSound(musicId.get(2));
+                mSoundPoolUtil.playSound(2);
             } else {
-                mSoundPoolUtil.playSound(musicId.get(1));
+                mSoundPoolUtil.playSound(1);
             }
-            if (index++ >= molecule) {
+            if (++index >= molecule) {
                 index = 0;
             }
             try {
@@ -204,6 +197,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 e.printStackTrace();
             }
 
-        } while (play);
+        } while (isPlaying);
     }
 }
