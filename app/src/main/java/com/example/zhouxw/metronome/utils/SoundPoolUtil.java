@@ -1,7 +1,6 @@
 package com.example.zhouxw.metronome.utils;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
@@ -51,15 +50,11 @@ public class SoundPoolUtil {
         float currentVolumeIndex = mAudioManager.getStreamVolume(streamType);
         float maxVolumeIndex = mAudioManager.getStreamMaxVolume(streamType);
         this.volume = currentVolumeIndex / maxVolumeIndex;
-        ((Activity) context).setVolumeControlStream(streamType);
         AudioAttributes audioAttributes = new AudioAttributes.Builder()
                 .setUsage(AudioAttributes.USAGE_GAME)
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                 .build();
         this.mSoundPool = new SoundPool.Builder().setAudioAttributes(audioAttributes).setMaxStreams(MAX_STREAMS).build();
-        musicId.put(0,mSoundPool.load(mContext, R.raw.metronome1, 1));
-        musicId.put(1,mSoundPool.load(mContext, R.raw.metronome2, 1));
-        musicId.put(2,mSoundPool.load(mContext, R.raw.metronome3, 1));
 
     }
 
@@ -68,10 +63,13 @@ public class SoundPoolUtil {
     public void playSound(final int resId) {
         final float lefVolume = volume;
         final float rightVolume = volume;
-        Log.d("zhouxw","playSound=="+volume+"  ="+resId);
+        musicId.put(0,mSoundPool.load(mContext, R.raw.metronome1, 1));
+        musicId.put(1,mSoundPool.load(mContext, R.raw.metronome2, 1));
+        musicId.put(2,mSoundPool.load(mContext, R.raw.metronome3, 1));
         mSoundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
             @Override
             public void onLoadComplete(SoundPool soundPool, int i, int i1) {
+                Log.d("zhouxw","onLoadComplete");
                 mSoundPool.play(musicId.get(resId), lefVolume, rightVolume, 1, 0, 1f);
             }
         });

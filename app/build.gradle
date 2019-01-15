@@ -1,6 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias '12312307'
+            storeFile file('../jks/store.jks')
+            storePassword '12312307'
+        }
+    }
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.example.zhouxw.metronome"

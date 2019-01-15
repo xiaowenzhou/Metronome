@@ -1,11 +1,8 @@
 package com.example.zhouxw.metronome;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageButton;
@@ -13,7 +10,6 @@ import android.widget.TextView;
 
 import com.example.zhouxw.metronome.utils.SoundPoolUtil;
 
-import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -54,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mSharedPreferences=getSharedPreferences(SPEED_PRE,Context.MODE_PRIVATE);
         initData();
         initView();
+        mSoundPoolUtil.playSound(0);
     }
 
     private void initView(){
