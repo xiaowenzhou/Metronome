@@ -63,9 +63,16 @@ public class SoundPoolUtil {
     public void playSound(final int resId) {
         final float lefVolume = volume;
         final float rightVolume = volume;
-        musicId.put(0,mSoundPool.load(mContext, R.raw.metronome1, 1));
-        musicId.put(1,mSoundPool.load(mContext, R.raw.metronome2, 1));
-        musicId.put(2,mSoundPool.load(mContext, R.raw.metronome3, 1));
+        switch (resId){
+            case 0: musicId.put(0,mSoundPool.load(mContext, R.raw.metronome1, 1));
+                    break;
+            case 1: musicId.put(1,mSoundPool.load(mContext, R.raw.metronome2, 1));
+                    break;
+            case 2: musicId.put(2,mSoundPool.load(mContext, R.raw.metronome3, 1));
+                    break;
+            default:
+
+        }
         mSoundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
             @Override
             public void onLoadComplete(SoundPool soundPool, int i, int i1) {

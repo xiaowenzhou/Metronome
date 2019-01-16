@@ -113,6 +113,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             case R.id.btn_play:{
                 isPlaying = !isPlaying;
+                if (isPlaying){
+                    btnPlay.setImageResource(R.drawable.ic_pause);
+                }else {
+                    btnPlay.setImageResource(R.drawable.ic_play);
+                }
               mExecutors.execute(playTask);
                 break;
             }

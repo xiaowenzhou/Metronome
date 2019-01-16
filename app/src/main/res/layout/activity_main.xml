@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/background"
     tools:context=".MainActivity">
 
     <ImageButton
@@ -14,7 +15,8 @@
         android:layout_marginBottom="164dp"
         android:focusable="true"
         android:clickable="true"
-        android:background="@drawable/ic_play"
+        android:src="@drawable/ic_play"
+        android:background="@drawable/selector_search_tab_bg"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -27,7 +29,8 @@
         android:layout_marginEnd="8dp"
         android:focusable="true"
         android:clickable="true"
-        android:background="@drawable/ic_increase"
+        android:src="@drawable/ic_increase"
+        android:background="@drawable/selector_search_tab_bg"
         app:layout_constraintEnd_toStartOf="@+id/tv_speed"
         app:layout_constraintHorizontal_bias="0.372"
         app:layout_constraintStart_toStartOf="parent"
@@ -43,7 +46,8 @@
         android:focusable="false"
         android:clickable="true"
         android:layout_marginBottom="256dp"
-        android:background="@drawable/ic_add"
+        android:src="@drawable/ic_add"
+        android:background="@drawable/selector_search_tab_bg"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.521"
@@ -75,7 +79,8 @@
         android:clickable="true"
         android:focusable="true"
         android:layout_marginBottom="72dp"
-        android:background="@drawable/ic_increase"
+        android:src="@drawable/ic_increase"
+        android:background="@drawable/selector_search_tab_bg"
         app:layout_constraintBottom_toTopOf="@+id/btn_increase"
         app:layout_constraintEnd_toStartOf="@+id/btn_add_molecule"
         app:layout_constraintHorizontal_bias="1.0"
@@ -89,7 +94,8 @@
         android:focusable="true"
         android:clickable="true"
         android:layout_marginBottom="72dp"
-        android:background="@drawable/ic_add"
+        android:src="@drawable/ic_add"
+        android:background="@drawable/selector_search_tab_bg"
         app:layout_constraintBottom_toTopOf="@+id/btn_increase"
         app:layout_constraintLeft_toRightOf="@+id/btn_increase_molecule" />
 
@@ -101,7 +107,8 @@
         android:layout_marginBottom="72dp"
         android:focusable="true"
         android:clickable="true"
-        android:background="@drawable/ic_increase"
+        android:src="@drawable/ic_increase"
+        android:background="@drawable/selector_search_tab_bg"
         app:layout_constraintBottom_toTopOf="@+id/btn_add"
         app:layout_constraintEnd_toStartOf="@+id/btn_add_meno" />
 
@@ -112,7 +119,8 @@
         android:layout_marginBottom="72dp"
         android:clickable="true"
         android:focusable="true"
-        android:background="@drawable/ic_add"
+        android:src="@drawable/ic_add"
+        android:background="@drawable/selector_search_tab_bg"
         app:layout_constraintBottom_toTopOf="@+id/btn_add"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@id/btn_increase_deno" />
